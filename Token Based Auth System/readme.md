@@ -42,33 +42,33 @@ This document explains different approaches to handling **sign out** in token-ba
 **Diagram:**
 
 ```
-+---------+        +--------+        +------+        +-------+
-|  User   |        | Client |        |Server|        |  DB   |
-+---------+        +--------+        +------+        +-------+
-     | login req        |                 |                |
-     |----------------->|                 |                |
-     |                  | /login          |                |
++---------+        +--------+        +------+         +-------+
+|  User   |        | Client |        |Server|         |  DB   |
++---------+        +--------+        +------+         +-------+
+     | login req        |                 |                  |
+     |----------------->|                 |                  |
+     |                  | /login          |                  |
      |                  |---------------->| generate JWT & refresh
      |                  |                 | store refresh -> DB
-     |                  |                 |---------------->|
+     |                  |                 |----------------> |
      |                  |<----------------| send JWT + refresh
-     |  tokens issued   | JWT -> client   |                |
-     |<-----------------| refresh -> cookie/DB             |
-     | API request      |                 |                |
-     |----------------->| send JWT       |                |
-     |                  |---------------->| validate JWT   |
-     |                  |                 |<----------------|
-     |<-----------------| response OK     |                |
-     | JWT expired soon |                 |                |
-     | use refresh token|                 |                |
-     |----------------->| send refresh    |                |
-     |                  |---------------->| validate in DB |
-     |                  |<----------------| issue new JWT  |
-     |<-----------------| new JWT to client cookie        |
-     | Logout           |                 |                |
-     |----------------->| /logout         |                |
-     |                  |---------------->| delete refresh |
-     |                  |                 |---------------->|
+     |  tokens issued   | JWT -> client   |                  |
+     |<-----------------| refresh -> cookie/DB               |
+     | API request      |                 |                  |
+     |----------------->| send JWT       |                   |
+     |                  |---------------->| validate JWT     |
+     |                  |                 |<---------------- |
+     |<-----------------| response OK     |                  |
+     | JWT expired soon |                 |                  |
+     | use refresh token|                 |                  |
+     |----------------->| send refresh    |                  |
+     |                  |---------------->| validate in DB   |
+     |                  |<----------------| issue new JWT    |
+     |<-----------------| new JWT to client cookie           |
+     | Logout           |                 |                  |
+     |----------------->| /logout         |                  |
+     |                  |---------------->| delete refresh   |
+     |                  |                 |----------------> |
 ```
 
 **Pros:** Stateless, scalable, widely used.
@@ -88,24 +88,24 @@ This document explains different approaches to handling **sign out** in token-ba
 **Diagram:**
 
 ```
-+---------+        +--------+        +------+        +-------+
-|  User   |        | Client |        |Server|        | Redis |
-+---------+        +--------+        +------+        +-------+
-     | login req        |                 |               |
-     |----------------->|                 |               |
-     |                  | /login          |               |
++---------+        +--------+        +------+         +-------+
+|  User   |        | Client |        |Server|         | Redis |
++---------+        +--------+        +------+         +-------+
+     | login req        |                 |                 |
+     |----------------->|                 |                 |
+     |                  | /login          |                 |
      |                  |---------------->| generate JWT & refresh
      |                  |                 | store token ID -> Redis
      |                  |                 |---------------->|
      |                  |<----------------| JWT + refresh sent
-     | API request      |                 |               |
-     |----------------->| send JWT       |               |
+     | API request      |                 |                 |
+     |----------------->| send JWT       |                  |
      |                  |---------------->| validate JWT & check Redis
      |                  |                 |<----------------|
-     |<-----------------| response OK     |               |
-     | Logout           |                 |               |
-     |----------------->| /logout         |               |
-     |                  |---------------->| remove token ID
+     |<-----------------| response OK     |                 |
+     | Logout           |                 |                 |
+     |----------------->| /logout         |                 |
+     |                  |---------------->| remove token ID |
      |                  |                 |---------------->|
 ```
 
